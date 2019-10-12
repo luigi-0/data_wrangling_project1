@@ -26,27 +26,34 @@ contain numbers and symbols(-,+) so I created a search for a patter where
 with open("January_2017_Record_Layout.txt", encoding = 'unicode_escape') as data_dict:
     with open("myfile.txt", "w") as f:
         for line in data_dict:
+            # Collapse more than two space into no space
             line = re.sub(r"( ){2,}", "", line, flags=re.IGNORECASE)
+            # Convert tab followed by space into tab
+            line = re.sub(r"[\t](?= )", "\t", line, flags=re.IGNORECASE)
+            # Covert space followed by tab to tab
+            line = re.sub(r"(?<= )[\t]", "\t", line, flags=re.IGNORECASE)
+            # Get rid of any spaces or tabs at end of lines
+            line = re.sub(r"[\t ]+$", "", line, flags=re.IGNORECASE)
+            # Find tabs inside comments and convert to space
+            line = re.sub(r"[ ][\t](?=[\(,-.A-z])", " ", line, flags=re.IGNORECASE)
+            line = re.sub(r"[\t][ ](?=[\(,-.A-z])", " ", line, flags=re.IGNORECASE)
+            # Find multiple tab and spaces and conver to single tab
+            #line = re.sub(r"[\t]+[\s]+?", "\t", line, flags=re.IGNORECASE)
             line = re.sub(r"(\t){1,}", "\t", line, flags=re.IGNORECASE)
-            line = re.sub(r"[ ]+$", "", line, flags=re.IGNORECASE)
-            # This finds the identifier
-            if re.search("^[0-9]+[\t][0-9]+", line, flags=re.IGNORECASE):
-                line = re.sub(r"^", "NA\tNA\t", line, flags=re.IGNORECASE)
+            if re.search("NAME	SIZE	DESCRIPTION	LOCATION", line, flags=re.IGNORECASE):
                 f.write(line)
-            elif (re.search("^[A-z0-9]+", line, flags=re.IGNORECASE) and
-                re.search("([0-9 -]+$)", line, flags=re.IGNORECASE)):
+            #This finds the identifier information
+            elif re.search("^[A-z0-9]+[\t]+[0-9]+[\t]+[A-z0-9 \(\)\t]+[0-9]+[- ]+[0-9 ]+", line, flags=re.IGNORECASE):
+                line = re.sub(r"[\t]+[ ]+[\t]", "\t", line, flags=re.IGNORECASE)
+                line = re.sub(r"[\t](?=[\(,-.])", " ", line, flags=re.IGNORECASE)
+                line = re.sub(r"(?<= )[\t]", " ", line, flags=re.IGNORECASE)
                 f.write(line)
             else:
                 line = re.sub(r"^[ ]{1,}", "", line, flags=re.IGNORECASE)
-                line = re.sub(r"^[\t ]{0,}", "NA\tNA\t", line, flags=re.IGNORECASE)
+                line = re.sub(r"[\t]", " ", line, flags=re.IGNORECASE)
+                line = re.sub(r"^[\t ]{0,}", "NA\tNA\t", line, flags=re.IGNORECASE)        
                 f.write(line)
 
 
-a = "HRHHID			15		HOUSEHOLD IDENTIFIER	(Part 1)					 1- 15"
+df = pd.read_csv('myfile.txt', sep='\t', skiprows=13, na_values='NA')
 
-b = "					EDITED UNIVERSE:	ALL HHLD's IN SAMPLE"
-
-re.match("^[A-z0-9]*", a)
-
-if re.search("([0-9 -]+$)", b):
-    print('HI')
