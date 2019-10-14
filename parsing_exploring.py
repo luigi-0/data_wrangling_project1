@@ -24,7 +24,7 @@ with open("January_2017_Record_Layout.txt", encoding = 'cp1252') as data_dict:
             # Convert more than one tab into one tab
             line = re.sub(r"(\t){1,}", "\t", line, flags=re.IGNORECASE)
             # Remove spaces infront or behind of hyphen
-            line = re.sub(r"(?<=[-–])[\s]|[\s](?=[-])", "", line, flags=re.IGNORECASE)
+            line = re.sub(r"(?<=[-–])[\s]|[\s](?=[-–])", "", line, flags=re.IGNORECASE)
             # Remove tabs at end of line
             line = re.sub(r"[\t]$", "", line, flags=re.IGNORECASE)
             if re.search("(NAME)[\s]+(SIZE)[\s]+(DESCRIPTION)[\s]+(LOCATION)", line, flags=re.IGNORECASE):
@@ -45,5 +45,3 @@ with open("January_2017_Record_Layout.txt", encoding = 'cp1252') as data_dict:
 
 
 df = pd.read_csv('myfile.txt', sep='\t', skiprows=13, na_values='NA').dropna(how='all')
-
-^(FILLER)[\t][\d]+[\t][\w\d ]+[\t][\d-]+
