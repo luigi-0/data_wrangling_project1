@@ -31,7 +31,7 @@ with open("January_2017_Record_Layout.txt", encoding = 'cp1252') as data_dict:
             line = re.sub(r"[\t]$", "", line, flags=re.IGNORECASE)
             if re.search("(NAME)[\s]+(SIZE)[\s]+(DESCRIPTION)[\s]+(LOCATION)", line, flags=re.IGNORECASE):
                 f.write(line)
-            elif re.search(r"^(FILLER)[\t][\d][\t][\d-]+", line, flags=re.IGNORECASE):
+            elif re.search(r"^(FILLER|PADDING)[\t][\d][\t][\d-]+", line, flags=re.IGNORECASE):
                 line = re.sub(r"(?<=[\d])[\t](?=[\d])", "\tNA\t", line, flags=re.IGNORECASE)
                 f.write(line)
             #This finds the identifier information
