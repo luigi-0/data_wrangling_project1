@@ -12,7 +12,7 @@ import re
 os.chdir(r"/Users/luisgranados/Documents/R-Projects/R-for_data_science/parsing")
 
 """
-
+NEED to work on padding; basically like filler
 """
 with open("January_2017_Record_Layout.txt", encoding = 'cp1252') as data_dict:
     with open("myfile.txt", "w") as f:
@@ -23,8 +23,10 @@ with open("January_2017_Record_Layout.txt", encoding = 'cp1252') as data_dict:
             line = re.sub(r"(?<=[\t])[ ]|[ ](?=[\t])", "", line, flags=re.IGNORECASE)
             # Convert more than one tab into one tab
             line = re.sub(r"(\t){1,}", "\t", line, flags=re.IGNORECASE)
+            # Standardize all hyphens
+            line = re.sub(r"–", "-", line, flags=re.IGNORECASE)
             # Remove spaces infront or behind of hyphen
-            line = re.sub(r"(?<=[-–])[\s]|[\s](?=[-–])", "", line, flags=re.IGNORECASE)
+            line = re.sub(r"(?<=[-])[\s]|[\s](?=[-])", "", line, flags=re.IGNORECASE)
             # Remove tabs at end of line
             line = re.sub(r"[\t]$", "", line, flags=re.IGNORECASE)
             if re.search("(NAME)[\s]+(SIZE)[\s]+(DESCRIPTION)[\s]+(LOCATION)", line, flags=re.IGNORECASE):
