@@ -22,6 +22,8 @@ into the description column.
 
 The condition that finds the column specifier also picks up lines that only
 contain numbers and symbols(-,+) so I created a search for a patter where
+
+This work. Now focus on removing spaces before and after - for the location
 """
 with open("January_2017_Record_Layout.txt", encoding = 'unicode_escape') as data_dict:
     with open("myfile.txt", "w") as f:
@@ -55,5 +57,5 @@ with open("January_2017_Record_Layout.txt", encoding = 'unicode_escape') as data
                 f.write(line)
 
 
-df = pd.read_csv('myfile.txt', sep='\t', skiprows=13, na_values='NA')
+df = pd.read_csv('myfile.txt', sep='\t', skiprows=13, na_values='NA').dropna(how='all')
 
