@@ -34,6 +34,8 @@ with open("January_2017_Record_Layout.txt", encoding = 'unicode_escape') as data
             line = re.sub(r"(?<=[\t])[ ]|[ ](?=[\t])", "", line, flags=re.IGNORECASE)
             # Convert more than one tab into one tab
             line = re.sub(r"(\t){1,}", "\t", line, flags=re.IGNORECASE)
+            # Remove spaces infront or behind of hyphen
+            line = re.sub(r"(?<=[-])[\s]|[\s](?=[-])", "", line, flags=re.IGNORECASE)
             if re.search("(NAME)[\s]+(SIZE)[\s]+(DESCRIPTION)[\s]+(LOCATION)", line, flags=re.IGNORECASE):
                 f.write(line)
             #This finds the identifier information
