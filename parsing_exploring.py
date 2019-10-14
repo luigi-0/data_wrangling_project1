@@ -14,7 +14,7 @@ os.chdir(r"/Users/luisgranados/Documents/R-Projects/R-for_data_science/parsing")
 """
 
 """
-with open("January_2017_Record_Layout.txt", encoding = 'unicode_escape') as data_dict:
+with open("January_2017_Record_Layout.txt", encoding = 'cp1252') as data_dict:
     with open("myfile.txt", "w") as f:
         for line in data_dict:
             # Collapse more than two space into no space
@@ -24,7 +24,7 @@ with open("January_2017_Record_Layout.txt", encoding = 'unicode_escape') as data
             # Convert more than one tab into one tab
             line = re.sub(r"(\t){1,}", "\t", line, flags=re.IGNORECASE)
             # Remove spaces infront or behind of hyphen
-            line = re.sub(r"(?<=[-])[\s]|[\s](?=[-])", "", line, flags=re.IGNORECASE)
+            line = re.sub(r"(?<=[-–])[\s]|[\s](?=[-])", "", line, flags=re.IGNORECASE)
             # Remove tabs at end of line
             line = re.sub(r"[\t]$", "", line, flags=re.IGNORECASE)
             if re.search("(NAME)[\s]+(SIZE)[\s]+(DESCRIPTION)[\s]+(LOCATION)", line, flags=re.IGNORECASE):
@@ -33,7 +33,7 @@ with open("January_2017_Record_Layout.txt", encoding = 'unicode_escape') as data
                 line = re.sub(r"(?<=[\d])[\t](?=[\d])", "\tNA\t", line, flags=re.IGNORECASE)
                 f.write(line)
             #This finds the identifier information
-            elif re.search("^[A-z0-9]+[\t]+[0-9]+[\t]+[A-z0-9\s\W\D]+[0-9]+[- ]+[0-9 ]+", line, flags=re.IGNORECASE):
+            elif re.search("^[\w\d]+[\t][\d]+[\t][\w\d\W\D ]+[\t][\d]+[ \D\W]+[\d]+", line, flags=re.IGNORECASE):
                 # Remove tabs inside the description column
                 line = re.sub(r"(?<=[A-z])[\t](?=[A-z\D\W])", " ", line, flags=re.IGNORECASE)
                 f.write(line)
