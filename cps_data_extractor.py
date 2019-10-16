@@ -64,7 +64,7 @@ def row_skipper(file):
         count = 0
         for line in codebook:
             count += 1
-            if re.search("(NAME)[\s]+(SIZE)[\s]+(DESCRIPTION)[\s]+(LOCATION)", line):
+            if re.search("(NAME)[\t ]+(SIZE)[\t ]+(DESCRIPTION)[\t ]+(LOCATION)", line):
                 count -= 1
                 break
     return count
