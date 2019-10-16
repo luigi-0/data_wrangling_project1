@@ -5,11 +5,7 @@ Created on Thu Oct 10 09:49:57 2019
 
 @author: luisgranados
 """
-import os
-import pandas as pd
 import re
-
-os.chdir(r"/Users/luisgranados/Documents/R-Projects/R-for_data_science/parsing")
 
 def file_parser(source, parsed):
     """
@@ -50,7 +46,3 @@ def file_parser(source, parsed):
                     line = re.sub(r"[\t]", " ", line, flags=re.IGNORECASE)
                     line = re.sub(r"^[\t ]{0,}", "NA\tNA\t", line, flags=re.IGNORECASE)        
                     f.write(line)
-                    
-file_parser("January_2017_Record_Layout.txt", "myfile.txt")
-
-df = pd.read_csv('myfile.txt', sep='\t', skiprows=13, na_values='NA').dropna(how='all')

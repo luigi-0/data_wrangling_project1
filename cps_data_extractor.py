@@ -8,21 +8,7 @@ Created on Tue Oct 15 10:06:53 2019
 This program uses the parsed CPS code created by parsing_explorer and a text
 file containing the variables of interest to import a cps data frame.
 """
-import os
-import pandas as pd
 import re
-
-os.chdir(r"/Users/luisgranados/Documents/R-Projects/R-for_data_science/parsing")
-
-try:
-    selected_variables = pd.read_csv('cps_selected_variables')
-    parsed_file = pd.read_csv('myfile.txt', sep='\t', skiprows=13, na_values='NA').dropna(how='all')
-except:
-    print("The required files were not imported.")
-
-
-# Create dataframe with only selected variables
-selected_variables = pd.merge(parsed_file, selected_variables, how='inner', on='NAME')
 
 def location_parser(selected_variables, column):
     """
@@ -82,9 +68,3 @@ def row_skipper(file):
                 count -= 1
                 break
     return count
-
-fields = location_parser(selected_variables, "LOCATION")
-
-fields = location_modifier(fields)
-
-cps = pd.read_fwf("jun19pub.zip", colspecs=fields, names=selected_variables['NAME'], na_values=-1)
