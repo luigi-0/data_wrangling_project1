@@ -10,6 +10,7 @@ file containing the variables of interest to import a cps data frame.
 """
 import os
 import pandas as pd
+import re
 
 os.chdir(r"/Users/luisgranados/Documents/R-Projects/R-for_data_science/parsing")
 
@@ -63,4 +64,27 @@ def location_modifier(fields):
         fields[i] = tuple(fields[i])
     return fields
 
-cps = pd.read_fwf("jun19pub.zip", colspecs=selected_fields, names=selected_variables['NAME'], na_values=-1)
+def row_skipper(file):
+    """
+    Count how many rows are needed to be skipped in the parsed codebook.
+    
+    Parameters:
+        file (character): File name of the parsed codebook
+        
+    Returns:
+        count: The number of lines to be skipped
+    """
+    with open(file, "r") as codebook:
+        count = 0
+        for line in codebook:
+            count += 1
+            if re.search("(NAME)[\s]+(SIZE)[\s]+(DESCRIPTION)[\s]+(LOCATION)", line):
+                count -= 1
+                break
+    return count
+
+fields = location_parser(selected_variables, "LOCATION")
+
+fields = location_modifier(fields)
+
+cps = pd.read_fwf("jun19pub.zip", colspecs=fields, names=selected_variables['NAME'], na_values=-1)
