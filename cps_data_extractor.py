@@ -31,10 +31,10 @@ def file_parser(source, parsed):
                 # Standardize all hyphens
                 line = re.sub(r"–", "-", line, flags=re.IGNORECASE)
                 # Remove spaces infront or behind of hyphen
-                line = re.sub(r"(?<=[-])[\s]|[\s](?=[-])", "", line, flags=re.IGNORECASE)
+                line = re.sub(r"(?<=[-])[\t ]|[\t ](?=[-])", "", line, flags=re.IGNORECASE)
                 # Remove tabs at end of line
                 line = re.sub(r"[\t]$", "", line, flags=re.IGNORECASE)
-                if re.search("(NAME)[\s]+(SIZE)[\s]+(DESCRIPTION)[\s]+(LOCATION)", line, flags=re.IGNORECASE):
+                if re.search("(NAME)[\t ]+(SIZE)[\t ]+(DESCRIPTION)[\t ]+(LOCATION)", line, flags=re.IGNORECASE):
                     f.write(line)
                 elif re.search(r"^(FILLER|PADDING)[\t][\d][\t][\d-]+", line, flags=re.IGNORECASE):
                     line = re.sub(r"(?<=[\d])[\t](?=[\d])", "\tNA\t", line, flags=re.IGNORECASE)
