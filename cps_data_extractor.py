@@ -23,11 +23,25 @@ except:
 # Create dataframe with only selected variables
 selected_variables = pd.merge(parsed_file, selected_variables, how='inner', on='NAME')
 
-selected_fields = []
-for field in selected_variables["LOCATION"]:
-    field = field.split("-")
-    field = [int(i) for i in field]
-    selected_fields.append(field)
+def location_parser(column):
+    """
+    Parse the location variable by creating a list of tuples.
+    
+    Remove the hyphen between the start/stop positions. Convert all elements to
+    integers and create a list of tuples.
+    
+    Parameters:
+    arg1 (character): The name of the column containing the start/stop positions.
+    
+    Returns:
+        list: A list of tuples containing the start/stop positions.
+    """
+    selected_fields = []
+    for field in selected_variables[column]:
+        field = field.split("-")
+        field = [int(i) for i in field]
+        selected_fields.append(field)
+    return selected_fields
 
 # Modify fields to work with read_fwf()
 for i in range(len(selected_fields)):
@@ -35,5 +49,3 @@ for i in range(len(selected_fields)):
     selected_fields[i] = tuple(selected_fields[i])
 
 cps = pd.read_fwf("jun19pub.zip", colspecs=selected_fields, names=selected_variables['NAME'], na_values=-1)
-
-
