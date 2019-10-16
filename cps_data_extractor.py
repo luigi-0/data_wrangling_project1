@@ -13,9 +13,12 @@ import pandas as pd
 
 os.chdir(r"/Users/luisgranados/Documents/R-Projects/R-for_data_science/parsing")
 
-selected_variables = pd.read_csv('cps_selected_variables')
+try:
+    selected_variables = pd.read_csv('cps_selected_variables')
+    parsed_file = pd.read_csv('myfile.txt', sep='\t', skiprows=13, na_values='NA').dropna(how='all')
+except:
+    print("The required files were not imported.")
 
-parsed_file = pd.read_csv('myfile.txt', sep='\t', skiprows=13, na_values='NA').dropna(how='all')
 
 # Create dataframe with only selected variables
 selected_variables = pd.merge(parsed_file, selected_variables, how='inner', on='NAME')
@@ -32,3 +35,5 @@ for i in range(len(selected_fields)):
     selected_fields[i] = tuple(selected_fields[i])
 
 cps = pd.read_fwf("jun19pub.zip", colspecs=selected_fields, names=selected_variables['NAME'], na_values=-1)
+
+
