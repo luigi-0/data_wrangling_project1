@@ -23,7 +23,7 @@ except:
 # Create dataframe with only selected variables
 selected_variables = pd.merge(parsed_file, selected_variables, how='inner', on='NAME')
 
-def location_parser(column):
+def location_parser(selected_variables, column):
     """
     Parse the location variable by creating a list of tuples.
     
@@ -31,21 +31,36 @@ def location_parser(column):
     integers and create a list of tuples.
     
     Parameters:
-    arg1 (character): The name of the column containing the start/stop positions.
+        selected_variables (dataframe): The dataframe containing the location of
+        the variables contained in the cps_selected_variables file
+        
+        column (character): The name of the column containing the start/stop positions
     
     Returns:
-        list: A list of tuples containing the start/stop positions.
+        selected_fields: A list of tuples containing the start/stop positions
     """
-    selected_fields = []
+    fields = []
     for field in selected_variables[column]:
         field = field.split("-")
         field = [int(i) for i in field]
-        selected_fields.append(field)
-    return selected_fields
+        fields.append(field)
+    return fields
 
-# Modify fields to work with read_fwf()
-for i in range(len(selected_fields)):
-    selected_fields[i][0] = selected_fields[i][0] - 1
-    selected_fields[i] = tuple(selected_fields[i])
+def location_modifier(fields):
+    """
+    Modify the parsed location variable.
+    
+    Subtract 1 from all the start positions in order to be able to use pd.read_fwf()
+    
+    Parameters:
+        field (list): The list of tuples created by location_parser()
+    
+    Returns:
+        fields: A list of tuples
+    """
+    for i in range(len(fields)):
+        fields[i][0] = fields[i][0] - 1
+        fields[i] = tuple(fields[i])
+    return fields
 
 cps = pd.read_fwf("jun19pub.zip", colspecs=selected_fields, names=selected_variables['NAME'], na_values=-1)
