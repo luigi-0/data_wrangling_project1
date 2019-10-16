@@ -39,14 +39,32 @@ class codebook_tests(unittest.TestCase):
         self.assertEqual(first_row_df[0], 1)
 
     def test_location_parser(self):
-        """Ensure that location_parser() is not dropping locations."""
+        """
+        Ensure that location_parser() is not dropping locations.
+        
+        Make sure the location column is continuous.
+        """
         fields = cs.location_parser(location, "LOCATION")
+        missing_fields = []
+        continuous_fields = []
+        
+        for i in range(len(fields)-1):
+            if (fields[i][1] + 1) == fields[i+1][0]:
+                continuous_fields.append(fields[i])
+                if i == (len(fields)-2):
+                    continuous_fields.append(fields[i+1])
+            else:
+                missing_fields.append(fields[i])
+                missing_fields.append(fields[i+1])
+
         self.assertEqual(len(fields), len(location["LOCATION"]))
+        self.assertEqual(len(missing_fields), 0)
         
     def test_location_modifier(self):
         """Ensure that location_modifier() is not dropping locations."""
         fields = cs.location_parser(location, "LOCATION")
         fields = cs.location_modifier(fields)
+
         self.assertEqual(len(fields), len(location["LOCATION"]))
 
 if __name__ == '__main__':
