@@ -47,6 +47,8 @@ class codebook_tests(unittest.TestCase):
         fields = cs.location_parser(location, "LOCATION")
         missing_fields = []
         continuous_fields = []
+        field_sum = 0
+        gauss_formula = lambda x: int((x * (x+1))/2)
         
         for i in range(len(fields)-1):
             if (fields[i][1] + 1) == fields[i+1][0]:
@@ -56,9 +58,13 @@ class codebook_tests(unittest.TestCase):
             else:
                 missing_fields.append(fields[i])
                 missing_fields.append(fields[i+1])
+                
+        for i in fields:
+            field_sum += sum(range(i[0], i[1]+1))
 
         self.assertEqual(len(fields), len(location["LOCATION"]))
         self.assertEqual(len(missing_fields), 0)
+        self.assertEqual(field_sum, gauss_formula(fields[-1][1]))
         
     def test_location_modifier(self):
         """Ensure that location_modifier() is not dropping locations."""
@@ -69,27 +75,3 @@ class codebook_tests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-# Convert all fields into integers and store a nested list object
-all_fields = []
-for field in location["LOCATION"]:
-    field = field.split("-")
-    field = [int(i) for i in field]
-    all_fields.append(field)
-
-# Test to see if the end and start of each field are continuous.
-missing_fields = []
-continuous_fields = []
-for i in range(len(all_fields)-1):
-    if (all_fields[i][1] + 1) == all_fields[i+1][0]:
-        continuous_fields.append(all_fields[i])
-        if i == (len(all_fields)-2):
-            continuous_fields.append(all_fields[i+1])
-    else:
-        missing_fields.append(all_fields[i])
-        missing_fields.append(all_fields[i+1])
-
-if len(missing_fields) > 0:
-    print("There are missing fields in the parsed codebook")
-else:
-    print("All fields are being being imported")
