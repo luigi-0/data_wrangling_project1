@@ -15,7 +15,7 @@ import cps_data_extractor as cs
 
 os.chdir(r"/Users/luisgranados/Documents/R-Projects/R-for_data_science/parsing")
 
-parsed_file = "myfile2015.txt"
+parsed_file = "myfile2017.txt"
 
 skip = cs.row_skipper(parsed_file)
 
@@ -47,8 +47,6 @@ class codebook_tests(unittest.TestCase):
         fields = cs.location_parser(location, "LOCATION")
         missing_fields = []
         continuous_fields = []
-        field_sum = 0
-        gauss_formula = lambda x: int((x * (x+1))/2)
         
         for i in range(len(fields)-1):
             if (fields[i][1] + 1) == fields[i+1][0]:
@@ -58,12 +56,19 @@ class codebook_tests(unittest.TestCase):
             else:
                 missing_fields.append(fields[i])
                 missing_fields.append(fields[i+1])
-                
-        for i in fields:
-            field_sum += sum(range(i[0], i[1]+1))
 
         self.assertEqual(len(fields), len(location["LOCATION"]))
         self.assertEqual(len(missing_fields), 0)
+        
+    def test_location_continuous(self):
+        """Make sure the location column is continuous."""
+        fields = cs.location_parser(location, "LOCATION")
+        field_sum = 0
+        gauss_formula = lambda x: int((x * (x+1))/2)
+        
+        for i in fields:
+            field_sum += sum(range(i[0], i[1]+1))
+            
         self.assertEqual(field_sum, gauss_formula(fields[-1][1]))
         
     def test_location_modifier(self):
