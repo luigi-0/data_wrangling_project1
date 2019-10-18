@@ -25,13 +25,21 @@ def cps_links(filetype):
     
     links = []
     for link in soup.find_all('a', href=True):
-        if link['href'].lower().endswith('.txt'):
+        if link['href'].lower().endswith(filetype):
             links.append(link['href'])
+            
+    return links
 
 # This will work for downloading all the data dictionaries text files
-def codebook_downloader():
+def codebook_downloader(links):
     """Download all the text files from the Census' FTP site."""
     for link in links:
         file = requests.get(link, allow_redirects=True)
-        filename = re.search(r"(?<=[/])[\w\d_.-]+(.txt)$", link).group(0)
+        filename = re.search(r"(?<=[/])[\w\d_.-]+(.txt|.zip)$", link).group(0)
         open(filename, 'wb').write(file.content)
+
+
+os.chdir("/Users/luisgranados/Documents/R-Projects/R-for_data_science/parsing/datafiles")
+
+data = cps_links(".zip")
+codebook_downloader(data)
