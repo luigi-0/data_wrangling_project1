@@ -19,7 +19,7 @@ def cps_links(filetype):
     """
     url = "https://thedataweb.rm.census.gov/ftp/cps_ftp.html"
     response = requests.get(url)
-    soup = BeautifulSoup(response.content)
+    soup = BeautifulSoup(response.content, features="lxml")
     
     links = []
     for link in soup.find_all('a', href=True):
