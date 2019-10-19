@@ -9,15 +9,16 @@ import requests
 import re
 from bs4 import BeautifulSoup
 
-def cps_links(filetype):
+def link_crawler(url, filetype):
     """
     Find and store the desired links from the Census' FTP site.
     
-    Parameters (character): The type of file you want to be stored(.txt, .zip, ect.).
+    Parameters:
+        url (character): The url to the Census' FTP website
+        filetype (character): The type of file you want to be stored(.txt, .zip, ect.)
     
     Returns (list): A list containing all the links the selected file types 
     """
-    url = "https://thedataweb.rm.census.gov/ftp/cps_ftp.html"
     response = requests.get(url)
     soup = BeautifulSoup(response.content, features="lxml")
     
@@ -28,13 +29,22 @@ def cps_links(filetype):
             
     return links
 
-def codebook_downloader(links):
+def file_downloader(url, filetype):
     """
     Download all the selected files from the Census' FTP site.
     
-    Parameters (list): A list containing all the links for the files
+    Parameters :
+        url (character): The url to the Census' FTP website
+        filetype (character): The type of file you want to be stored(.txt, .zip, ect.)
+
     """
+    links = link_crawler(url, filetype)
+    
     for link in links:
         file = requests.get(link, allow_redirects=True)
-        filename = re.search(r"(?<=[/])[\w\d_.-]+(.txt|.zip)$", link).group(0)
-        open(filename, 'wb').write(file.content)
+        if re.search(r"(?<=[/])[\w\d_.-]+(.txt)$", link):
+            filename = re.search(r"(?<=[/])[\w\d_.-]+(.txt)$", link).group(0)
+            open(filename, 'wb').write(file.content)
+        if re.search(r"(?<=[/])[\w\d_.-]+(pub)(.zip)$", link):
+            filename = re.search(r"(?<=[/])[\w\d_.-]+(pub)(.zip)$", link).group(0)
+            open(filename, 'wb').write(file.content)
