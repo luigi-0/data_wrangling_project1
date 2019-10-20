@@ -5,6 +5,7 @@ Created on Wed Oct 16 19:35:02 2019
 
 @author: luisgranados
 """
+import os
 import requests
 import re
 from bs4 import BeautifulSoup
@@ -78,20 +79,20 @@ def new_files(filetype):
     pub_links = cps_ftp_links(filetype)
     present = os.listdir()
     
-    pub_files = []
+    pub_files = {}
     for file in pub_links:
         if re.search(pattern, file):
             filename = re.search(pattern, file).group(0)
-            pub_files.append(filename)
+            pub_files[filename] = file
 
     missing_file = []
     for file in pub_files:
         if file not in present:
-            missing_file.append(file)
+            missing_file.append(pub_files[file])
     
     return missing_file
 
-def file_downloader(links, filetype):
+def file_downloader(filetype):
     """
     Download all the selected files from the Census' FTP site.
     
@@ -99,14 +100,13 @@ def file_downloader(links, filetype):
         links (character): Links containing the files to be downloaded
 
     """
-    newfiles = new_files(filetype)
+    links = new_files(filetype)
     pattern = pub_filename(filetype)
     
     for link in links:
         file = requests.get(link, allow_redirects=True)
         if re.search(pattern, link):
             filename = re.search(pattern, link).group(0)
-            if filename in newfiles:
-                open(filename, 'wb').write(file.content)
+            open(filename, 'wb').write(file.content)
 
 
