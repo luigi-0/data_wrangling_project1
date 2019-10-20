@@ -108,5 +108,3 @@ def file_downloader(filetype):
         if re.search(pattern, link):
             filename = re.search(pattern, link).group(0)
             open(filename, 'wb').write(file.content)
-
-
