@@ -51,24 +51,6 @@ def cps_ftp_links(filetype):
                     
     return links
 
-def file_downloader(links, filetype):
-    """
-    Download all the selected files from the Census' FTP site.
-    
-    Parameters :
-        links (character): Links containing the files to be downloaded
-
-    """
-    newfiles = new_files(filetype)
-    pattern = pub_filename(filetype)
-    
-    for link in links:
-        file = requests.get(link, allow_redirects=True)
-        if re.search(pattern, link):
-            filename = re.search(pattern, link).group(0)
-            if filename in newfiles:
-                open(filename, 'wb').write(file.content)
-
 def pub_filename(filetype):
     """
     Regex pattern to search for the public use CPS filename.
@@ -108,3 +90,23 @@ def new_files(filetype):
             missing_file.append(file)
     
     return missing_file
+
+def file_downloader(links, filetype):
+    """
+    Download all the selected files from the Census' FTP site.
+    
+    Parameters :
+        links (character): Links containing the files to be downloaded
+
+    """
+    newfiles = new_files(filetype)
+    pattern = pub_filename(filetype)
+    
+    for link in links:
+        file = requests.get(link, allow_redirects=True)
+        if re.search(pattern, link):
+            filename = re.search(pattern, link).group(0)
+            if filename in newfiles:
+                open(filename, 'wb').write(file.content)
+
+
