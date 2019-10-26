@@ -12,10 +12,11 @@ import re
 import pandas as pd
 import unittest
 import cps_ftp as cf
+import labor_force_stats as lf
 
 os.chdir(r"/Users/luisgranados/Documents/python-projects/cps/codebooks")
 
-parsed_file = "may04dd_parsed"
+parsed_file = "January_2015_Record_Layout_parsed"
 
 skip = cf.row_skipper(parsed_file)
 
@@ -24,6 +25,22 @@ parsed_df = pd.read_csv(parsed_file, sep="\t", skiprows=skip, na_values="NA").dr
 location = parsed_df[["LOCATION"]].dropna(how="all")
 
 location = location.loc[location["LOCATION"] != "LOCATION"]
+
+"""New test for checking against the website."""
+cps_lf_series = ['LNU00000000', 'LNU01000000', 'LNU02000000', 'LNU03000000', 'LNU05000000']
+url = "https://download.bls.gov/pub/time.series/ln/ln.data.1.AllData" 
+
+dfy = pd.read_csv(url, sep="\t")
+
+dfy.rename(str.strip, axis='columns', inplace=True)
+
+dfy['series_id'] = dfy['series_id'].str.strip()
+
+dfy = dfy.loc[dfy["series_id"].isin(cps_lf_series)]
+
+dfy_test['month'] = dfy['period'].str[1:].copy().astype(int)
+dfy_test['value'] = dfy['value'].astype(int)
+dfy_test = dfy_test.loc[(dfy_test['year'] == dfy_test['year'].max()) & (dfy_test['month'] == dfy_test['month'].max())]
 
 class codebook_tests(unittest.TestCase):
     
@@ -77,6 +94,13 @@ class codebook_tests(unittest.TestCase):
         fields = cf.location_modifier(fields)
 
         self.assertEqual(len(fields), len(location["LOCATION"]))
+        
+    def test_labor_force_stats(self):
+        """Replicate official labor force statistics."""
+        self.assertEqual(lf.civ_noninst_pop, dfy_test.loc[dfy_test['series_id'] == "LNU00000000"].values[0][3])
+        self.assertEqual(lf.civ_lf, dfy_test.loc[dfy_test['series_id'] == "LNU01000000"].values[0][3])
+        self.assertEqual(lf.number_employed, dfy_test.loc[dfy_test['series_id'] == "LNU02000000"].values[0][3])
+        self.assertEqual(lf.number_unemployed, dfy_test.loc[dfy_test['series_id'] == "LNU03000000"].values[0][3])
 
 if __name__ == '__main__':
     unittest.main()
