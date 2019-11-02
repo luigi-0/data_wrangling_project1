@@ -8,6 +8,7 @@ Created on Wed Oct 16 19:35:02 2019
 import os
 import requests
 import re
+import pandas as pd
 from bs4 import BeautifulSoup
 
 def path_finder(sub):
@@ -230,8 +231,8 @@ def parsed_codebook_importer(codebook):
     Returns:
         dataframe
     """
-    cf.path_finder('codebooks')
-    skip = cf.row_skipper(codebook)
+    path_finder('codebooks')
+    skip = row_skipper(codebook)
     codebook = pd.read_csv(codebook, sep="\t", skiprows=skip).dropna()
     os.chdir('..')
     
