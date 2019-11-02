@@ -17,6 +17,7 @@ def path_finder(sub):
     Arguments:
         sub (character): The name of the directory you want to visit
     """
+    root = "/Users/luisgranados/Documents/python-projects/cps"
     if os.getcwd() != root:
         os.chdir("/Users/luisgranados/Documents/python-projects/cps")
     os.chdir(sub)
