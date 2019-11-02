@@ -219,3 +219,20 @@ def location_modifier(fields):
         fields[i][0] = fields[i][0] - 1
         fields[i] = tuple(fields[i])
     return fields
+
+def parsed_codebook_importer(codebook):
+    """
+    Import the parsed CPS codebook
+    
+    Parameters:
+        codebook (str): the filename of the parsed codebook
+        
+    Returns:
+        dataframe
+    """
+    cf.path_finder('codebooks')
+    skip = cf.row_skipper(codebook)
+    codebook = pd.read_csv(codebook, sep="\t", skiprows=skip).dropna()
+    os.chdir('..')
+    
+    return codebook
