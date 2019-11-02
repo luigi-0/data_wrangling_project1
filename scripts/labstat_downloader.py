@@ -54,6 +54,10 @@ def select_month(df, year, month):
     Parameters:
         df (dataframe): A dataframe containing labstat data
         
+        Year (int): The year you want to select
+        
+        Month (int): The month you want to select
+        
     Returns:
         dataframe
     """
@@ -73,8 +77,11 @@ def recent_month(df):
         dataframe
     """
     current_period = df.sort_values(by=['year', 'month']).tail(1)[['year', 'month']]
-
-    df = df.loc[(df['year'] == current_period['year'].values[0]) & \
-              (df['month'] == current_period['month'].values[0])]
+    
+    year = current_period['year'].values[0]
+    
+    month = current_period['month'].values[0]
+    
+    df = select_month(df, year, month)
     
     return df
