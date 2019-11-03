@@ -218,9 +218,9 @@ def location_modifier(fields):
     Returns:
         fields: A list of tuples
     """
-    for i in range(len(fields)):
-        fields[i][0] = fields[i][0] - 1
-        fields[i] = tuple(fields[i])
+    for i, item in enumerate(fields):
+        item[0] = item[0] - 1
+        fields[i] = tuple(item)
     return fields
 
 def parsed_codebook_importer(codebook):
