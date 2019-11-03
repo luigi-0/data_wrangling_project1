@@ -27,22 +27,39 @@ COLSPECS = cf.location_modifier(COLSPECS)
 
 # Import the CPS public file
 cf.path_finder('datafiles')
-DATAFRAME_BASE = pd.read_fwf(CPS_FILE, colspecs=COLSPECS, names=FIELDS.NAME, na_values=[-1])
+DATAFRAME = pd.read_fwf(CPS_FILE, colspecs=COLSPECS, names=FIELDS.NAME, na_values=[-1])
 
 # Store the year and month of the imported CPS datafile
-FILE_YEAR = DATAFRAME_BASE['HRYEAR4'].values[0]
-FILE_MONTH = DATAFRAME_BASE['HRMONTH'].values[0]
+FILE_YEAR = DATAFRAME['HRYEAR4'].values[0]
+FILE_MONTH = DATAFRAME['HRMONTH'].values[0]
 
-CIV_NONINST_POP = int(((DATAFRAME_BASE['PWCMPWGT'] / 10000).sum()/1000).round())
+def labor_force_statistics(dataframe, pemlr):
+    """
+    Calculate some simple labor force statistics
 
-DATAFRAME = DATAFRAME_BASE.loc[(DATAFRAME_BASE['PEMLR'] == 3) | (DATAFRAME_BASE['PEMLR'] == 4)]
+    This function is limited to calculating statistics that simply group
+    the labor status of the respondent and sums the weights
 
-NUMBER_UNEMPLOYED = int(((DATAFRAME['PWCMPWGT'] / 10000).sum()/1000).round())
+    Parameters:
+        dataframe (dataframe): A dataframe containing CPS public data
 
-DATAFRAME = DATAFRAME_BASE.loc[(DATAFRAME_BASE['PEMLR'] == 1) | (DATAFRAME_BASE['PEMLR'] == 2)]
+        labor_force_status (list): The labor force status of the responded.
+        Must be a value between 1-8.
 
-NUMBER_EMPLOYED = int(((DATAFRAME['PWCMPWGT'] / 10000).sum()/1000).round())
+    Result:
+        statistic (int): The sum of the weights
+    """
 
-DATAFRAME = DATAFRAME_BASE.loc[DATAFRAME_BASE['PEMLR'].isin([1, 2, 3, 4])]
+    dataframe = dataframe.loc[dataframe['PEMLR'].isin(pemlr)]
 
-CIV_LF = int(((DATAFRAME['PWCMPWGT'] / 10000).sum()/1000).round())
+    statistic = int(((dataframe['PWCMPWGT'] / 10000).sum()/1000).round())
+
+    return statistic
+
+CIV_NONINST_POP = labor_force_statistics(DATAFRAME, pemlr=[1, 2, 3, 4, 5, 6, 7, 8])
+
+NUMBER_UNEMPLOYED = labor_force_statistics(DATAFRAME, pemlr=[3, 4])
+
+NUMBER_EMPLOYED = labor_force_statistics(DATAFRAME, pemlr=[1, 2])
+
+CIV_LF = labor_force_statistics(DATAFRAME, pemlr=[1, 2, 3, 4])
