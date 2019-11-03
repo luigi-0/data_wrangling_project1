@@ -6,41 +6,43 @@ Created on Wed Oct 23 20:21:28 2019
 @author: luisgranados
 """
 
-import os
 import pandas as pd
 import cps_ftp as cf
 
-root = "/Users/luisgranados/Documents/python-projects/cps"
-os.chdir(root)
+# CPS public file to be imported
+CPS_FILE = 'sep19pub.zip'
 
-os.chdir("settings")
-cps_vars = pd.read_csv("CPS_selected_variables")
-os.chdir("..")
+# Read in the CPS variables you are interested in
+cf.path_finder('settings')
+CPS_VARS = pd.read_csv('CPS_selected_variables')
 
-os.chdir("codebooks")
-book = "January_2017_Record_Layout_parsed"
-skip = cf.row_skipper(book)
-codebook = pd.read_csv(book, sep="\t", skiprows=skip).dropna()
-os.chdir("..")
+# Import the parsed CPS codebook
+CODEBOOK = cf.parsed_codebook_importer('January_2017_Record_Layout_parsed')
 
-fields = cps_vars.merge(codebook)
+# Store the location of the selected CPS variables
+FIELDS = CPS_VARS.merge(CODEBOOK)
 
-colspecs = cf.location_parser(fields, "LOCATION")
-colspecs = cf.location_modifier(colspecs)
+COLSPECS = cf.location_parser(FIELDS, 'LOCATION')
+COLSPECS = cf.location_modifier(COLSPECS)
 
-os.chdir("datafiles")
-df = pd.read_fwf("sep19pub.zip", colspecs=colspecs, names=fields.NAME, na_values=[-1])
+# Import the CPS public file
+cf.path_finder('datafiles')
+DATAFRAME_BASE = pd.read_fwf(CPS_FILE, colspecs=COLSPECS, names=FIELDS.NAME, na_values=[-1])
 
-civ_noninst_pop = int(((df["PWCMPWGT"] / 10000).sum()/1000).round())
+# Store the year and month of the imported CPS datafile
+FILE_YEAR = DATAFRAME_BASE['HRYEAR4'].values[0]
+FILE_MONTH = DATAFRAME_BASE['HRMONTH'].values[0]
 
-df_test = df.loc[(df["PEMLR"] == 3) | (df["PEMLR"] == 4)]
+CIV_NONINST_POP = int(((DATAFRAME_BASE['PWCMPWGT'] / 10000).sum()/1000).round())
 
-number_unemployed = int(((df_test["PWCMPWGT"] / 10000).sum()/1000).round())
+DATAFRAME = DATAFRAME_BASE.loc[(DATAFRAME_BASE['PEMLR'] == 3) | (DATAFRAME_BASE['PEMLR'] == 4)]
 
-df_test = df.loc[(df["PEMLR"] == 1) | (df["PEMLR"] == 2)]
+NUMBER_UNEMPLOYED = int(((DATAFRAME['PWCMPWGT'] / 10000).sum()/1000).round())
 
-number_employed = int(((df_test["PWCMPWGT"] / 10000).sum()/1000).round())
+DATAFRAME = DATAFRAME_BASE.loc[(DATAFRAME_BASE['PEMLR'] == 1) | (DATAFRAME_BASE['PEMLR'] == 2)]
 
-df_test = df.loc[df["PEMLR"].isin([1, 2, 3, 4])]
+NUMBER_EMPLOYED = int(((DATAFRAME['PWCMPWGT'] / 10000).sum()/1000).round())
 
-civ_lf = int(((df_test["PWCMPWGT"] / 10000).sum()/1000).round())
+DATAFRAME = DATAFRAME_BASE.loc[DATAFRAME_BASE['PEMLR'].isin([1, 2, 3, 4])]
+
+CIV_LF = int(((DATAFRAME['PWCMPWGT'] / 10000).sum()/1000).round())
