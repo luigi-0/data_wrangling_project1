@@ -6,27 +6,37 @@ Created on Mon Oct 21 20:45:45 2019
 @author: luisgranados
 """
 
-import os
 import pandas as pd
 import cps_ftp as cf
 
-root = "/Users/luisgranados/Documents/python-projects/cps"
-os.chdir(root)
+def cps_data_importer(codebook, datafile):
+    """
+    Import the CPS public use datafile
 
-os.chdir("settings")
-cps_vars = pd.read_csv("CPS_selected_variables")
-os.chdir("..")
+    The datafile will be imported according to the variables contained in
+    the CPS_selected_variables file.
 
-os.chdir("codebooks")
-book = "January_2017_Record_Layout_parsed"
-skip = cf.row_skipper(book)
-codebook = pd.read_csv(book, sep="\t", skiprows=skip).dropna()
-os.chdir("..")
+    Parameters:
+        codebook (str): The parsed codebook you want to use
 
-fields = cps_vars.merge(codebook)
+        datafile (str): The public datafile you want to import
 
-colspecs = cf.location_parser(fields, "LOCATION")
-colspecs = cf.location_modifier(colspecs)
+    Returns:
+        dataframe (dataframe): A dataframe containing selected CPS data
+    """
+    cf.path_finder('settings')
+    cps_vars = pd.read_csv("CPS_selected_variables")
 
-os.chdir("datafiles")
-df = pd.read_fwf("sep19pub.zip", colspecs=colspecs, names=fields.NAME, na_values=[-1])
+    cf.path_finder('codebooks')
+    skip = cf.row_skipper(codebook)
+    codebook = pd.read_csv(codebook, sep="\t", skiprows=skip).dropna()
+
+    fields = cps_vars.merge(codebook)
+
+    colspecs = cf.location_parser(fields, "LOCATION")
+    colspecs = cf.location_modifier(colspecs)
+
+    cf.path_finder('datafiles')
+    dataframe = pd.read_fwf(datafile, colspecs=colspecs, names=fields.NAME, na_values=[-1])
+
+    return dataframe
