@@ -132,7 +132,7 @@ def file_parser(source, parsed):
         parsed (character): The name of the parsed output file
     """
     with open(source, encoding='cp1252') as data_dict:
-        with open(parsed, "w") as f:
+        with open(parsed, "w") as file:
             for line in data_dict:
                 # Collapse more than two space into no space
                 line = re.sub(r"( ){2,}", "", line, flags=re.IGNORECASE)
@@ -148,21 +148,21 @@ def file_parser(source, parsed):
                 line = re.sub(r"[\t]$", "", line, flags=re.IGNORECASE)
                 if re.search("(NAME)[\t ]+(SIZE)[\t ]+(DESCRIPTION)[\t ]+(LOCATION)",
                              line, flags=re.IGNORECASE):
-                    f.write(line)
+                    file.write(line)
                 elif re.search(r"^(FILLER|PADDING)[\t][\d][\t][\d-]+", line, flags=re.IGNORECASE):
                     line = re.sub(r"(?<=[\d])[\t](?=[\d])", "\tNA\t", line, flags=re.IGNORECASE)
-                    f.write(line)
+                    file.write(line)
                 #This finds the identifier information
                 elif re.search(r"^[\w\d]+[\t][\d]+[\t][\w\d\W\D ]+[\t][\d]+[ \D\W]+[\d]+",
                                line, flags=re.IGNORECASE):
                     # Remove tabs inside the description column
                     line = re.sub(r"(?<=[A-z])[\t](?=[A-z\D\W])", " ", line, flags=re.IGNORECASE)
-                    f.write(line)
+                    file.write(line)
                 else:
                     line = re.sub(r"^[\t ]{1,}", "", line, flags=re.IGNORECASE)
                     line = re.sub(r"[\t]", " ", line, flags=re.IGNORECASE)
                     line = re.sub(r"^[\t ]{0,}", "NA\tNA\t", line, flags=re.IGNORECASE)
-                    f.write(line)
+                    file.write(line)
 
 def row_skipper(file):
     """
