@@ -76,8 +76,12 @@ def pub_filename(filetype):
     """
     if filetype == ".txt":
         return r"(?<=[/])[\w\d_.-]+(.txt)$"
+
     if filetype == ".zip":
         return r"(?<=[/])[\w\d_.-]+(pub)(.zip)$"
+
+    message = 'Filetype not supported'
+    return message
 
 def new_files(filetype):
     """
