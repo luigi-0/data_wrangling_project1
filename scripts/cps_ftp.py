@@ -237,3 +237,35 @@ def parsed_codebook_importer(codebook):
     os.chdir('..')
     
     return codebook
+
+def cps_data_importer(codebook, datafile):
+    """
+    Import the CPS public use datafile
+
+    The datafile will be imported according to the variables contained in
+    the CPS_selected_variables file.
+
+    Parameters:
+        codebook (str): The parsed codebook you want to use
+
+        datafile (str): The public datafile you want to import
+
+    Returns:
+        dataframe (dataframe): A dataframe containing selected CPS data
+    """
+    path_finder('settings')
+    cps_vars = pd.read_csv("CPS_selected_variables")
+
+    path_finder('codebooks')
+    skip = row_skipper(codebook)
+    codebook = pd.read_csv(codebook, sep="\t", skiprows=skip).dropna()
+
+    fields = cps_vars.merge(codebook)
+
+    colspecs = location_parser(fields, "LOCATION")
+    colspecs = location_modifier(colspecs)
+
+    path_finder('datafiles')
+    dataframe = pd.read_fwf(datafile, colspecs=colspecs, names=fields.NAME, na_values=[-1])
+
+    return dataframe
