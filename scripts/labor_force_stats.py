@@ -46,7 +46,7 @@ def labor_force_statistics(dataframe, pemlr):
         labor_force_status (list): The labor force status of the responded.
         Must be a value between 1-8.
 
-    Result:
+    Returns:
         statistic (int): The sum of the weights
     """
 
