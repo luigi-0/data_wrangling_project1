@@ -35,7 +35,7 @@ def link_crawler(url, filetype):
     Returns (list): A list containing all the links the selected file types
     """
     response = requests.get(url)
-    soup = BeautifulSoup(response.content, features="lxml")
+    soup = BeautifulSoup(response.content, features='lxml')
 
     links = []
     for link in soup.find_all('a', href=True):
@@ -55,11 +55,11 @@ def cps_ftp_links(filetype):
     """
     url = st.CPS_URL
     response = requests.get(url)
-    soup = BeautifulSoup(response.content, features="lxml")
+    soup = BeautifulSoup(response.content, features='lxml')
 
     links = []
     for table in soup.find_all('table'):
-        if table.b.text == "Basic Monthly CPS4":
+        if table.b.text == 'Basic Monthly CPS4':
             for link in table.find_all('a', href=True):
                 if link['href'].lower().endswith(filetype):
                     links.append(link['href'])
@@ -75,11 +75,11 @@ def pub_filename(filetype):
 
     Returns (character): The regex pattern required to find the desired filetype
     """
-    if filetype == ".txt":
-        return r"(?<=[/])[\w\d_.-]+(.txt)$"
+    if filetype == '.txt':
+        return r'(?<=[/])[\w\d_.-]+(.txt)$'
 
-    if filetype == ".zip":
-        return r"(?<=[/])[\w\d_.-]+(pub)(.zip)$"
+    if filetype == '.zip':
+        return r'(?<=[/])[\w\d_.-]+(pub)(.zip)$'
 
     message = 'Filetype not supported'
     return message
@@ -137,36 +137,36 @@ def file_parser(source, parsed):
         parsed (character): The name of the parsed output file
     """
     with open(source, encoding='cp1252') as data_dict:
-        with open(parsed, "w") as file:
+        with open(parsed, 'w') as file:
             for line in data_dict:
                 # Collapse more than two space into no space
-                line = re.sub(r"( ){2,}", "", line, flags=re.IGNORECASE)
+                line = re.sub(r'( ){2,}', '', line, flags=re.IGNORECASE)
                 # Remove spaces behind or infront of tabs
-                line = re.sub(r"(?<=[\t])[ ]|[ ](?=[\t])", "", line, flags=re.IGNORECASE)
+                line = re.sub(r'(?<=[\t])[ ]|[ ](?=[\t])', '', line, flags=re.IGNORECASE)
                 # Convert more than one tab into one tab
-                line = re.sub(r"(\t){1,}", "\t", line, flags=re.IGNORECASE)
+                line = re.sub(r'(\t){1,}', '\t', line, flags=re.IGNORECASE)
                 # Standardize all hyphens
-                line = re.sub(r"–", "-", line, flags=re.IGNORECASE)
+                line = re.sub(r'–', '-', line, flags=re.IGNORECASE)
                 # Remove spaces infront or behind of hyphen
-                line = re.sub(r"(?<=[-])[\t ]|[\t ](?=[-])", "", line, flags=re.IGNORECASE)
+                line = re.sub(r'(?<=[-])[\t ]|[\t ](?=[-])', '', line, flags=re.IGNORECASE)
                 # Remove tabs at end of line
-                line = re.sub(r"[\t]$", "", line, flags=re.IGNORECASE)
-                if re.search("(NAME)[\t ]+(SIZE)[\t ]+(DESCRIPTION)[\t ]+(LOCATION)",
+                line = re.sub(r'[\t]$', '', line, flags=re.IGNORECASE)
+                if re.search('(NAME)[\t ]+(SIZE)[\t ]+(DESCRIPTION)[\t ]+(LOCATION)',
                              line, flags=re.IGNORECASE):
                     file.write(line)
-                elif re.search(r"^(FILLER|PADDING)[\t][\d][\t][\d-]+", line, flags=re.IGNORECASE):
-                    line = re.sub(r"(?<=[\d])[\t](?=[\d])", "\tNA\t", line, flags=re.IGNORECASE)
+                elif re.search(r'^(FILLER|PADDING)[\t][\d][\t][\d-]+', line, flags=re.IGNORECASE):
+                    line = re.sub(r'(?<=[\d])[\t](?=[\d])', '\tNA\t', line, flags=re.IGNORECASE)
                     file.write(line)
                 #This finds the identifier information
-                elif re.search(r"^[\w\d]+[\t][\d]+[\t][\w\d\W\D ]+[\t][\d]+[ \D\W]+[\d]+",
+                elif re.search(r'^[\w\d]+[\t][\d]+[\t][\w\d\W\D ]+[\t][\d]+[ \D\W]+[\d]+',
                                line, flags=re.IGNORECASE):
                     # Remove tabs inside the description column
-                    line = re.sub(r"(?<=[A-z])[\t](?=[A-z\D\W])", " ", line, flags=re.IGNORECASE)
+                    line = re.sub(r'(?<=[A-z])[\t](?=[A-z\D\W])', ' ', line, flags=re.IGNORECASE)
                     file.write(line)
                 else:
-                    line = re.sub(r"^[\t ]{1,}", "", line, flags=re.IGNORECASE)
-                    line = re.sub(r"[\t]", " ", line, flags=re.IGNORECASE)
-                    line = re.sub(r"^[\t ]{0,}", "NA\tNA\t", line, flags=re.IGNORECASE)
+                    line = re.sub(r'^[\t ]{1,}', '', line, flags=re.IGNORECASE)
+                    line = re.sub(r'[\t]', ' ', line, flags=re.IGNORECASE)
+                    line = re.sub(r'^[\t ]{0,}', 'NA\tNA\t', line, flags=re.IGNORECASE)
                     file.write(line)
 
 def row_skipper(file):
@@ -179,11 +179,11 @@ def row_skipper(file):
     Returns:
         count: The number of lines to be skipped
     """
-    with open(file, "r") as codebook:
+    with open(file, 'r') as codebook:
         count = 0
         for line in codebook:
             count += 1
-            if re.search("(NAME)[\t]+(SIZE)[\t]+(DESCRIPTION)[\t]+(LOCATION)", line):
+            if re.search('(NAME)[\t]+(SIZE)[\t]+(DESCRIPTION)[\t]+(LOCATION)', line):
                 count -= 1
                 break
     return count
@@ -206,7 +206,7 @@ def location_parser(selected_variables, column):
     """
     fields = []
     for field in selected_variables[column]:
-        field = field.split("-")
+        field = field.split('-')
         field = [int(i) for i in field]
         fields.append(field)
     return fields
@@ -240,7 +240,7 @@ def parsed_codebook_importer(codebook):
     """
     path_finder('codebooks')
     skip = row_skipper(codebook)
-    codebook = pd.read_csv(codebook, sep="\t", skiprows=skip).dropna()
+    codebook = pd.read_csv(codebook, sep='\t', skiprows=skip).dropna()
     os.chdir('..')
 
     return codebook
@@ -264,11 +264,11 @@ def cps_data_importer(codebook, datafile):
 
     path_finder('codebooks')
     skip = row_skipper(codebook)
-    codebook = pd.read_csv(codebook, sep="\t", skiprows=skip).dropna()
+    codebook = pd.read_csv(codebook, sep='\t', skiprows=skip).dropna()
 
     fields = cps_vars.merge(codebook)
 
-    colspecs = location_parser(fields, "LOCATION")
+    colspecs = location_parser(fields, 'LOCATION')
     colspecs = location_modifier(colspecs)
 
     path_finder('datafiles')
