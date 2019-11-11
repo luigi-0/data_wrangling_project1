@@ -7,8 +7,9 @@ Created on Wed Oct 23 20:21:28 2019
 """
 
 import cps_ftp as cf
+import settings as st
 
-DATAFRAME = cf.cps_data_importer('January_2017_Record_Layout_parsed', 'sep19pub.zip')
+DATAFRAME = cf.cps_data_importer(st.PARSED_CODEBOOK, st.CPS_MONTHLY_FILE)
 
 # Store the year and month of the imported CPS datafile
 FILE_YEAR = DATAFRAME['HRYEAR4'].values[0]
