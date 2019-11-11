@@ -7,16 +7,16 @@ Created on Mon Oct 14 09:53:18 2019
 
 Read in the parsed codebook and check to see if all the fields are being imported.
 """
-import os
 import unittest
 import pandas as pd
 import cps_ftp as cf
 import labor_force_stats as lf
 import labstat_downloader as ld
+import settings as st
 
-os.chdir(r"/Users/luisgranados/Documents/python-projects/cps/codebooks")
+cf.path_finder('codebooks')
 
-PARSED_FILE = "January_2015_Record_Layout_parsed"
+PARSED_FILE = st.PARSED_CODEBOOK
 
 SKIP = cf.row_skipper(PARSED_FILE)
 
@@ -26,9 +26,8 @@ LOCATION = PARSED_DF[["LOCATION"]].dropna(how="all")
 
 LOCATION = LOCATION.loc[LOCATION["LOCATION"] != "LOCATION"]
 
-"""New test for checking against the website."""
-CPS_LF_SERIES = ['LNU00000000', 'LNU01000000', 'LNU02000000', 'LNU03000000', 'LNU05000000']
-URL = "https://download.bls.gov/pub/time.series/ln/ln.data.1.AllData"
+CPS_LF_SERIES = st.CPS_LF_SERIES
+URL = st.LABSTAT_URL
 
 class CodebookTests(unittest.TestCase):
     """
