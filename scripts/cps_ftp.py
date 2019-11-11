@@ -10,6 +10,7 @@ import re
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
+import settings as st
 
 def path_finder(sub):
     """
@@ -18,9 +19,9 @@ def path_finder(sub):
     Arguments:
         sub (character): The name of the directory you want to visit
     """
-    root = "/Users/luisgranados/Documents/python-projects/cps"
+    root = st.ROOT
     if os.getcwd() != root:
-        os.chdir("/Users/luisgranados/Documents/python-projects/cps")
+        os.chdir(st.ROOT)
     os.chdir(sub)
 
 def link_crawler(url, filetype):
@@ -52,7 +53,7 @@ def cps_ftp_links(filetype):
 
     Returns (list): A list containing all the links the selected file types
     """
-    url = "https://thedataweb.rm.census.gov/ftp/cps_ftp.html"
+    url = st.CPS_URL
     response = requests.get(url)
     soup = BeautifulSoup(response.content, features="lxml")
 
