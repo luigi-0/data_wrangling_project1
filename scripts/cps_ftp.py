@@ -260,8 +260,7 @@ def cps_data_importer(codebook, datafile):
     Returns:
         dataframe (dataframe): A dataframe containing selected CPS data
     """
-    path_finder('settings')
-    cps_vars = pd.read_csv("CPS_selected_variables")
+    cps_vars = st.CPS_VARIABLES
 
     path_finder('codebooks')
     skip = row_skipper(codebook)
